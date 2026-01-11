@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Espacio de Bienestar - Silvana García</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+            }
+            50% {
+                transform: translateY(-20px) translateX(10px);
+            }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in {
+            animation: fade-in 1s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // Iconos personalizados (simplificados)
+        const Heart = ({ className }) => (
+            <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+        );
+
+        const Brain = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+        );
+
+        const Lightbulb = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+        );
+
+        const BookOpen = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+        );
+
+        const Smile = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        );
+
+        const Target = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" />
+            </svg>
+        );
+
+        const ChevronRight = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+        );
+
+        const Menu = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        );
+
+        const X = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        );
+
+        const Save = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+            </svg>
+        );
+
+        const CheckCircle = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        );
+
+        const TerapiaApp = () => {
+            const [activeSection, setActiveSection] = useState('home');
+            const [menuOpen, setMenuOpen] = useState(false);
+            const [savedProgress, setSavedProgress] = useState({});
+            const [showCover, setShowCover] = useState(true);
+
+            // Portada/Cover Screen
+            const CoverScreen = () => {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-600 flex items-center justify-center p-4 relative overflow-hidden">
+                        {/* Animated background elements */}
+                        <div className="absolute inset-0 overflow-hidden">
+                            <div className="absolute top-20 left-10 w-72 h-72 bg-white opacity-10 rounded-full blur-3xl animate-pulse"></div>
+                            <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-300 opacity-10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+                            <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-purple-300 opacity-10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+                        </div>
+
+                        {/* Main content */}
+                        <div className="relative z-10 text-center space-y-8 max-w-2xl">
+                            {/* Animated heart icon */}
+                            <div className="flex justify-center mb-6">
+                                <div className="relative">
+                                    <div className="absolute inset-0 bg-white opacity-30 rounded-full blur-xl animate-pulse"></div>
+                                    <div className="relative bg-white p-8 rounded-full shadow-2xl transform hover:scale-110 transition duration-300">
+                                        <Heart className="w-20 h-20 text-pink-500 fill-current animate-pulse" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Title */}
+                            <div className="space-y-4">
+                                <h1 className="text-6xl md:text-7xl font-bold text-white drop-shadow-2xl animate-fade-in">
+                                    Mi Espacio de
+                                </h1>
+                                <h2 className="text-7xl md:text-8xl font-extrabold bg-gradient-to-r from-yellow-200 via-pink-200 to-purple-200 bg-clip-text text-transparent drop-shadow-2xl">
+                                    Bienestar
+                                </h2>
+                            </div>
+
+                            {/* Subtitle */}
+                            <p className="text-2xl md:text-3xl text-white/90 font-light italic drop-shadow-lg">
+                                Un camino hacia el equilibrio mental
+                            </p>
+
+                            {/* Divider */}
+                            <div className="flex items-center justify-center gap-4 py-6">
+                                <div className="h-px w-20 bg-white/50"></div>
+                                <Brain className="w-8 h-8 text-white/80" />
+                                <div className="h-px w-20 bg-white/50"></div>
+                            </div>
+
+                            {/* Author info */}
+                            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border-2 border-white/20 shadow-2xl">
+                                <p className="text-white/70 text-sm uppercase tracking-widest mb-2">Desarrollado por</p>
+                                <h3 className="text-4xl font-bold text-white mb-4">Silvana García</h3>
+                                <div className="pt-4 border-t border-white/20">
+                                    <p className="text-3xl font-bold bg-gradient-to-r from-yellow-200 to-pink-200 bg-clip-text text-transparent">
+                                        2026
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Enter button */}
+                            <button
+                                onClick={() => setShowCover(false)}
+                                className="group relative bg-white text-purple-600 px-12 py-5 rounded-full text-xl font-bold shadow-2xl hover:shadow-pink-500/50 transform hover:scale-105 transition duration-300 overflow-hidden"
+                            >
+                                <span className="relative z-10 flex items-center gap-3">
+                                    Comenzar
+                                    <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                                </span>
+                                <div className="absolute inset-0 bg-gradient-to-r from-pink-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            </button>
+
+                            {/* Footer note */}
+                            <p className="text-white/50 text-sm mt-8">
+                                💜 Herramienta terapéutica complementaria
+                            </p>
+                        </div>
+
+                        {/* Floating particles effect */}
+                        <div className="absolute inset-0 pointer-events-none">
+                            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full opacity-60 animate-float"></div>
+                            <div className="absolute top-1/3 right-1/3 w-3 h-3 bg-pink-200 rounded-full opacity-40 animate-float" style={{animationDelay: '1s'}}></div>
+                            <div className="absolute bottom-1/4 left-1/2 w-2 h-2 bg-purple-200 rounded-full opacity-50 animate-float" style={{animationDelay: '2s'}}></div>
+                            <div className="absolute top-2/3 right-1/4 w-3 h-3 bg-white rounded-full opacity-30 animate-float" style={{animationDelay: '3s'}}></div>
+                        </div>
+                    </div>
+                );
+            };
+
+            // Sección: Psicoeducación con Metáforas
+            const MetaforasSection = () => {
+                const [selectedMetaphor, setSelectedMetaphor] = useState(null);
+
+                const metaforas = [
+                    {
+                        id: 'jardin',
+                        titulo: 'El Jardín Mental',
+                        problema: 'Pensamientos Rígidos',
+                        metafora: 'Imagina que tu mente es un jardín. Los pensamientos rígidos son como enredaderas que estrangulan las plantas que quieres que crezcan. Necesitamos podar esas enredaderas para que las otras plantas tengan espacio para florecer.',
+                        reflexion: '¿Qué "enredaderas" has notado en tu mente últimamente? ¿Qué "plantas" te gustaría que crezcan?',
+                        color: 'from-green-400 to-emerald-500'
+                    },
+                    {
+                        id: 'radio',
+                        titulo: 'La Radio Mental',
+                        problema: 'Pensamientos Intrusivos y Obsesiones',
+                        metafora: 'Tu mente es como una radio que a veces sintoniza estaciones no deseadas. Aparecen pensamientos intrusivos, o imágenes no deseados, poco placenteros y recurrentes que invaden, generando un malestar significativo, los cuales son difíciles de controlar o eliminar. Es como si el volumen de esas estaciones no deseadas estuviera demasiado alto y no pudieras encontrar el control para bajarlo. Vamos a ayudarte a encontrar ese control.',
+                        reflexion: '¿Qué "estación" no deseada se sintoniza más frecuentemente en tu mente? ¿Cómo suena ese volumen ahora?',
+                        color: 'from-purple-400 to-pink-500'
+                    },
+                    {
+                        id: 'rio',
+                        titulo: 'El Río de Pensamientos',
+                        problema: 'Rumiación',
+                        metafora: 'Tus pensamientos son como un río. A veces nos metemos en el río y nos dejamos arrastrar por la corriente de preocupaciones. Pero podemos aprender a sentarnos en la orilla y simplemente observar cómo pasan los pensamientos, sin dejarnos arrastrar.',
+                        reflexion: '¿Te encuentras "dentro del río" o "en la orilla" en este momento? ¿Qué pensamientos observas pasar?',
+                        color: 'from-blue-400 to-cyan-500'
+                    }
+                ];
+
+                return (
+                    <div className="space-y-6">
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl font-bold text-gray-800 mb-3">Comprende tu Mente</h2>
+                            <p className="text-gray-600">Metáforas que te ayudarán a entender tus pensamientos</p>
+                        </div>
+
+                        <div className="grid gap-4">
+                            {metaforas.map((meta) => (
+                                <div
+                                    key={meta.id}
+                                    className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer transform transition hover:scale-105"
+                                    onClick={() => setSelectedMetaphor(meta.id === selectedMetaphor ? null : meta.id)}
+                                >
+                                    <div className={`bg-gradient-to-r ${meta.color} p-4 text-white`}>
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <h3 className="text-xl font-bold">{meta.titulo}</h3>
+                                                <p className="text-sm opacity-90">{meta.problema}</p>
+                                            </div>
+                                            <Brain className="w-8 h-8" />
+                                        </div>
+                                    </div>
+                                    
+                                    {selectedMetaphor === meta.id && (
+                                        <div className="p-6 space-y-4">
+                                            <div className="bg-amber-50 p-4 rounded-xl border-l-4 border-amber-400">
+                                                <p className="text-gray-700 leading-relaxed">{meta.metafora}</p>
+                                            </div>
+                                            <div className="bg-blue-50 p-4 rounded-xl">
+                                                <p className="font-semibold text-gray-800 mb-2">Reflexiona:</p>
+                                                <p className="text-gray-700 italic">{meta.reflexion}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            };
+
+            // Sección: Técnicas de Flexibilización Cognitiva
+            const FlexibilizacionSection = () => {
+                const [selectedTechnique, setSelectedTechnique] = useState(null);
+                const [userInput, setUserInput] = useState({});
+
+                const tecnicas = [
+                    {
+                        id: 'abogado',
+                        nombre: 'El Abogado del Diablo',
+                        descripcion: 'Desafía tus pensamientos rígidos defendiendo el punto de vista opuesto',
+                        pasos: [
+                            'Identifica un pensamiento rígido que tengas',
+                            'Imagina que eres un abogado que debe defender lo contrario',
+                            'Lista al menos 3 argumentos a favor del punto de vista opuesto',
+                            'Reflexiona: ¿Hay algo de verdad en estos argumentos?'
+                        ],
+                        ejemplo: 'Si piensas "Debo ser perfecto en todo", argumenta a favor de la imperfección y sus beneficios',
+                        icon: '⚖️'
+                    },
+                    {
+                        id: 'carta',
+                        nombre: 'Carta al Pensamiento',
+                        descripcion: 'Escribe una carta a tu pensamiento rígido expresando cómo te afecta',
+                        pasos: [
+                            'Identifica el pensamiento rígido',
+                            'Escribe: "Querido pensamiento..."',
+                            'Expresa cómo este pensamiento afecta tu vida',
+                            'Desafía al pensamiento a cambiar',
+                            'Termina con lo que preferirías pensar'
+                        ],
+                        ejemplo: 'Querido pensamiento "Debo ser millonaria": Entiendo que quieres seguridad, pero me estás causando mucha ansiedad...',
+                        icon: '✉️'
+                    },
+                    {
+                        id: 'sipero',
+                        nombre: 'La Técnica del "Sí, Pero..."',
+                        descripcion: 'Reconoce el pensamiento y agrega una perspectiva más equilibrada',
+                        pasos: [
+                            'Identifica tu pensamiento rígido',
+                            'Comienza con "Sí, es cierto que..."',
+                            'Agrega "pero..." seguido de una perspectiva más equilibrada',
+                            'Reflexiona sobre cómo te sientes con esta nueva perspectiva'
+                        ],
+                        ejemplo: 'Sí, quiero ser millonaria, pero también valoro mi salud y mis relaciones',
+                        icon: '🔄'
+                    },
+                    {
+                        id: 'observador',
+                        nombre: 'El Observador Distante',
+                        descripcion: 'Observa tu vida desde afuera y date consejos a ti mismo',
+                        pasos: [
+                            'Imagina que eres un observador distante viendo tu vida',
+                            'Observa la situación con compasión y sin juzgar',
+                            '¿Qué consejo le darías a esa persona?',
+                            '¿Cómo aplicarías ese consejo a tu vida?'
+                        ],
+                        ejemplo: 'Si te vieras desde afuera preocupándote constantemente, ¿qué te dirías?',
+                        icon: '👁️'
+                    },
+                    {
+                        id: 'reinterpretacion',
+                        nombre: 'Reinterpretación Positiva',
+                        descripcion: 'Busca el lado positivo o la lección en situaciones difíciles',
+                        pasos: [
+                            'Identifica una situación que desencadene pensamientos rígidos',
+                            '¿Qué podrías aprender de esta situación?',
+                            '¿Hay algún beneficio oculto?',
+                            '¿Cómo esta experiencia te hace más fuerte?'
+                        ],
+                        ejemplo: 'Un error en el trabajo puede enseñarte resiliencia y nuevas formas de resolver problemas',
+                        icon: '🌟'
+                    }
+                ];
+
+                return (
+                    <div className="space-y-6">
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl font-bold text-gray-800 mb-3">Flexibiliza tu Pensamiento</h2>
+                            <p className="text-gray-600">Herramientas para desafiar pensamientos rígidos</p>
+                        </div>
+
+                        <div className="grid gap-4">
+                            {tecnicas.map((tec) => (
+                                <div key={tec.id} className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                                    <div
+                                        className="bg-gradient-to-r from-orange-400 to-red-400 p-4 text-white cursor-pointer"
+                                        onClick={() => setSelectedTechnique(selectedTechnique === tec.id ? null : tec.id)}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-3xl">{tec.icon}</span>
+                                                <div>
+                                                    <h3 className="text-xl font-bold">{tec.nombre}</h3>
+                                                    <p className="text-sm opacity-90">{tec.descripcion}</p>
+                                                </div>
+                                            </div>
+                                            <ChevronRight className={`w-6 h-6 transition-transform ${selectedTechnique === tec.id ? 'rotate-90' : ''}`} />
+                                        </div>
+                                    </div>
+
+                                    {selectedTechnique === tec.id && (
+                                        <div className="p-6 space-y-4">
+                                            <div className="bg-orange-50 p-4 rounded-xl">
+                                                <p className="font-semibold text-gray-800 mb-3">Pasos a seguir:</p>
+                                                <ol className="space-y-2">
+                                                    {tec.pasos.map((paso, idx) => (
+                                                        <li key={idx} className="flex gap-3">
+                                                            <span className="flex-shrink-0 w-6 h-6 bg-orange-400 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                                                                {idx + 1}
+                                                            </span>
+                                                            <span className="text-gray-700">{paso}</span>
+                                                        </li>
+                                                    ))}
+                                                </ol>
+                                            </div>
+
+                                            <div className="bg-blue-50 p-4 rounded-xl">
+                                                <p className="font-semibold text-gray-800 mb-2">Ejemplo:</p>
+                                                <p className="text-gray-700 italic">{tec.ejemplo}</p>
+                                            </div>
+
+                                            <div className="space-y-3">
+                                                <label className="block">
+                                                    <span className="text-gray-700 font-semibold">Tu práctica:</span>
+                                                    <textarea
+                                                        className="mt-2 w-full p-3 border-2 border-gray-200 rounded-xl focus:border-orange-400 focus:outline-none resize-none"
+                                                        rows="4"
+                                                        placeholder="Escribe aquí tu ejercicio..."
+                                                        value={userInput[tec.id] || ''}
+                                                        onChange={(e) => setUserInput({...userInput, [tec.id]: e.target.value})}
+                                                    />
+                                                </label>
+                                                <button
+                                                    className="w-full bg-gradient-to-r from-orange-400 to-red-400 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition"
+                                                    onClick={() => {
+                                                        setSavedProgress({...savedProgress, [tec.id]: userInput[tec.id]});
+                                                        alert('¡Progreso guardado! 💪');
+                                                    }}
+                                                >
+                                                    <Save className="w-5 h-5" />
+                                                    Guardar Progreso
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            };
+
+            // Sección: Manejo de Ansiedad y TOC
+            const AnsiedadSection = () => {
+                const [selectedStrategy, setSelectedStrategy] = useState(null);
+
+                const estrategias = [
+                    {
+                        id: 'semaforo',
+                        nombre: 'Técnica del Semáforo',
+                        descripcion: 'Maneja pensamientos obsesivos según su intensidad',
+                        icon: '🚦',
+                        color: 'from-red-400 via-yellow-400 to-green-400',
+                        niveles: [
+                            {
+                                color: 'Rojo 🔴',
+                                situacion: 'Pensamiento muy intrusivo, ansiedad alta',
+                                accion: 'DETENTE. Respira profundamente 5 veces. Cuenta hacia atrás desde 10. Reconoce que es solo un pensamiento.',
+                                bg: 'bg-red-50 border-red-300'
+                            },
+                            {
+                                color: 'Amarillo 🟡',
+                                situacion: 'Pensamiento presente pero menos intenso',
+                                accion: 'OBSERVA sin juzgar. Imagina que el pensamiento es una nube que pasa. No intentes cambiarlo, solo obsérvalo.',
+                                bg: 'bg-yellow-50 border-yellow-300'
+                            },
+                            {
+                                color: 'Verde 🟢',
+                                situacion: 'Pensamiento leve o ausente',
+                                accion: 'AVANZA. Enfócate en actividades significativas. Haz algo que disfrutes o que te acerque a tus metas.',
+                                bg: 'bg-green-50 border-green-300'
+                            }
+                        ]
+                    },
+                    {
+                        id: 'mindfulness',
+                        nombre: 'Mindfulness Sensorial',
+                        descripcion: 'Enfócate en el presente para calmar la mente',
+                        icon: '🧘',
+                        color: 'from-indigo-400 to-purple-400',
+                        ejercicios: [
+                            {
+                                sentido: 'Vista 👁️',
+                                ejercicio: 'Nombra 5 cosas que puedes ver a tu alrededor. Observa sus colores, formas y detalles.'
+                            },
+                            {
+                                sentido: 'Tacto ✋',
+                                ejercicio: 'Siente la textura de tu ropa, la temperatura del aire, el peso de tus pies en el suelo.'
+                            },
+                            {
+                                sentido: 'Oído 👂',
+                                ejercicio: 'Escucha 3 sonidos diferentes. Pueden ser cercanos o lejanos. Solo escucha sin juzgar.'
+                            },
+                            {
+                                sentido: 'Olfato 👃',
+                                ejercicio: 'Percibe algún aroma. Puede ser tu perfume, el aire, o algo cercano a ti.'
+                            },
+                            {
+                                sentido: 'Gusto 👅',
+                                ejercicio: 'Si tienes algo para beber o comer, saboréalo lentamente, prestando atención a cada matiz.'
+                            }
+                        ]
+                    },
+                    {
+                        id: 'espacioseguro',
+                        nombre: 'Espacio Seguro Mental',
+                        descripcion: 'Crea un refugio mental para momentos difíciles',
+                        icon: '🏡',
+                        color: 'from-teal-400 to-cyan-400',
+                        pasos: [
+                            'Cierra los ojos y respira profundamente',
+                            'Imagina un lugar donde te sientas completamente seguro y tranquilo',
+                            'Puede ser real o imaginario: una playa, un bosque, tu habitación perfecta',
+                            'Añade detalles: ¿qué ves?, ¿qué escuchas?, ¿cómo huele?',
+                            'Imagina cómo te sientes allí: en paz, seguro, en control',
+                            'Puedes volver a este lugar mentalmente cuando lo necesites'
+                        ]
+                    },
+                    {
+                        id: 'rituales',
+                        nombre: 'Rituales Alternativos',
+                        descripcion: 'Transforma compulsiones en acciones más saludables',
+                        icon: '🔄',
+                        color: 'from-pink-400 to-rose-400',
+                        ejemplos: [
+                            {
+                                compulsion: 'Lavarse las manos repetidamente',
+                                alternativa: 'Lávate las manos una vez con atención plena, sintiendo el agua, agradeciendo por tu salud'
+                            },
+                            {
+                                compulsion: 'Revisar cerraduras múltiples veces',
+                                alternativa: 'Revisa una vez con conciencia total, luego di en voz alta "Confío en mi revisión"'
+                            },
+                            {
+                                compulsion: 'Ordenar objetos de forma rígida',
+                                alternativa: 'Ordena conscientemente, pero deja intencionalmente un objeto ligeramente fuera de lugar como ejercicio de tolerancia'
+                            }
+                        ]
+                    }
+                ];
+
+                return (
+                    <div className="space-y-6">
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl font-bold text-gray-800 mb-3">Calma tu Ansiedad</h2>
+                            <p className="text-gray-600">Estrategias prácticas para momentos difíciles</p>
+                        </div>
+
+                        <div className="grid gap-4">
+                            {estrategias.map((est) => (
+                                <div key={est.id} className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                                    <div
+                                        className={`bg-gradient-to-r ${est.color} p-4 text-white cursor-pointer`}
+                                        onClick={() => setSelectedStrategy(selectedStrategy === est.id ? null : est.id)}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-3xl">{est.icon}</span>
+                                                <div>
+                                                    <h3 className="text-xl font-bold">{est.nombre}</h3>
+                                                    <p className="text-sm opacity-90">{est.descripcion}</p>
+                                                </div>
+                                            </div>
+                                            <ChevronRight className={`w-6 h-6 transition-transform ${selectedStrategy === est.id ? 'rotate-90' : ''}`} />
+                                        </div>
+                                    </div>
+
+                                    {selectedStrategy === est.id && (
+                                        <div className="p-6 space-y-4">
+                                            {est.niveles && (
+                                                <div className="space-y-3">
+                                                    {est.niveles.map((nivel, idx) => (
+                                                        <div key={idx} className={`p-4 rounded-xl border-2 ${nivel.bg}`}>
+                                                            <h4 className="font-bold text-gray-800 mb-2">{nivel.color}</h4>
+                                                            <p className="text-sm text-gray-600 mb-2">{nivel.situacion}</p>
+                                                            <p className="text-gray-800"><strong>Acción:</strong> {nivel.accion}</p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {est.ejercicios && (
+                                                <div className="space-y-3">
+                                                    <p className="font-semibold text-gray-800">Practica con tus 5 sentidos:</p>
+                                                    {est.ejercicios.map((ej, idx) => (
+                                                        <div key={idx} className="bg-purple-50 p-4 rounded-xl">
+                                                            <h4 className="font-bold text-gray-800 mb-1">{ej.sentido}</h4>
+                                                            <p className="text-gray-700">{ej.ejercicio}</p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {est.pasos && (
+                                                <div className="bg-teal-50 p-4 rounded-xl">
+                                                    <p className="font-semibold text-gray-800 mb-3">Crea tu espacio seguro:</p>
+                                                    <ol className="space-y-2">
+                                                        {est.pasos.map((paso, idx) => (
+                                                            <li key={idx} className="flex gap-3">
+                                                                <span className="flex-shrink-0 w-6 h-6 bg-teal-400 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                                                                    {idx + 1}
+                                                                </span>
+                                                                <span className="text-gray-700">{paso}</span>
+                                                            </li>
+                                                        ))}
+                                                    </ol>
+                                                </div>
+                                            )}
+
+                                            {est.ejemplos && (
+                                                <div className="space-y-3">
+                                                    <p className="font-semibold text-gray-800">Ejemplos de transformación:</p>
+                                                    {est.ejemplos.map((ej, idx) => (
+                                                        <div key={idx} className="bg-pink-50 p-4 rounded-xl border-l-4 border-pink-400">
+                                                            <p className="text-gray-600 text-sm mb-1"><strong>Antes:</strong> {ej.compulsion}</p>
+                                                            <p className="text-gray-800"><strong>Ahora:</strong> {ej.alternativa}</p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            };
+
+            // Sección Home
+            const HomeSection = () => {
+                const cards = [
+                    {
+                        id: 'psicoeducacion',
+                        title: 'Comprende tu Mente',
+                        description: 'Metáforas que te ayudarán a entender tus pensamientos',
+                        icon: <Brain className="w-12 h-12" />,
+                        color: 'from-blue-400 to-indigo-500',
+                        action: () => setActiveSection('metaforas')
+                    },
+                    {
+                        id: 'flexibilizacion',
+                        title: 'Flexibiliza tu Pensamiento',
+                        description: 'Técnicas para desafiar pensamientos rígidos',
+                        icon: <Lightbulb className="w-12 h-12" />,
+                        color: 'from-orange-400 to-red-400',
+                        action: () => setActiveSection('flexibilizacion')
+                    },
+                    {
+                        id: 'ansiedad',
+                        title: 'Calma tu Ansiedad',
+                        description: 'Estrategias para manejar obsesiones y miedos',
+                        icon: <Heart className="w-12 h-12" />,
+                        color: 'from-pink-400 to-purple-500',
+                        action: () => setActiveSection('ansiedad')
+                    },
+                    {
+                        id: 'recursos',
+                        title: 'Recursos Adicionales',
+                        description: 'Lecturas, videos y más herramientas',
+                        icon: <BookOpen className="w-12 h-12" />,
+                        color: 'from-green-400 to-teal-500',
+                        action: () => setActiveSection('recursos')
+                    }
+                ];
+
+                return (
+                    <div className="space-y-8">
+                        <div className="text-center space-y-4">
+                            <div className="inline-block p-4 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full">
+                                <Smile className="w-16 h-16 text-white" />
+                            </div>
+                            <h1 className="text-4xl font-bold text-gray-800">Bienvenido a tu Espacio de Bienestar</h1>
+                            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                                Un lugar seguro para trabajar en tu salud mental, a tu propio ritmo
+                            </p>
+                        </div>
+
+                        <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-6 rounded-2xl border-2 border-amber-200">
+                            <h3 className="text-lg font-bold text-gray-800 mb-2">💡 Recuerda</h3>
+                            <p className="text-gray-700">
+                                El cambio es un proceso gradual. Cada pequeño paso cuenta. Sé paciente y compasivo contigo mismo.
+                            </p>
+                        </div>
+
+                        <div className="grid md:grid-cols-2 gap-6">
+                            {cards.map((card) => (
+                                <div
+                                    key={card.id}
+                                    onClick={card.action}
+                                    className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer transform transition hover:scale-105 hover:shadow-xl"
+                                >
+                                    <div className={`bg-gradient-to-r ${card.color} p-6 text-white`}>
+                                        <div className="flex items-center justify-between mb-4">
+                                            {card.icon}
+                                            <ChevronRight className="w-8 h-8" />
+                                        </div>
+                                        <h3 className="text-2xl font-bold mb-2">{card.title}</h3>
+                                        <p className="opacity-90">{card.description}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="bg-white rounded-2xl shadow-lg p-6">
+                            <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                <Target className="w-6 h-6 text-purple-500" />
+                                Tu Progreso
+                            </h3>
+                            <div className="space-y-3">
+                                {Object.keys(savedProgress).length > 0 ? (
+                                    Object.keys(savedProgress).map((key) => (
+                                        <div key={key} className="flex items-center gap-3 bg-green-50 p-3 rounded-xl">
+                                            <CheckCircle className="w-5 h-5 text-green-500" />
+                                            <span className="text-gray-700">Has completado ejercicios de {key}</span>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-gray-500 italic">
+                                        Aún no has completado ejercicios. ¡Comienza explorando las secciones!
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            // Sección de Recursos
+            const RecursosSection = () => {
+                return (
+                    <div className="space-y-6">
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl font-bold text-gray-800 mb-3">Recursos Adicionales</h2>
+                            <p className="text-gray-600">Materiales complementarios para tu proceso</p>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div className="bg-white rounded-2xl shadow-lg p-6">
+                                <h3 className="text-xl font-bold text-gray-800 mb-4">🎯 Ejercicios Diarios</h3>
+                                <div className="space-y-3">
+                                    <div className="bg-amber-50 p-4 rounded-xl border-l-4 border-amber-400">
+                                        <strong className="text-gray-800">Mañana:</strong>
+                                        <p className="text-gray-600 text-sm mt-1">Comienza el día con 5 minutos de respiración consciente</p>
+                                    </div>
+                                    <div className="bg-amber-50 p-4 rounded-xl border-l-4 border-amber-400">
+                                        <strong className="text-gray-800">Tarde:</strong>
+                                        <p className="text-gray-600 text-sm mt-1">Practica una técnica de flexibilización cuando notes pensamientos rígidos</p>
+                                    </div>
+                                    <div className="bg-amber-50 p-4 rounded-xl border-l-4 border-amber-400">
+                                        <strong className="text-gray-800">Noche:</strong>
+                                        <p className="text-gray-600 text-sm mt-1">Reflexiona sobre 3 cosas positivas del día antes de dormir</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl shadow-lg p-6 border-2 border-pink-200">
+                                <h3 className="text-xl font-bold text-gray-800 mb-3">💌 Mensaje de Apoyo</h3>
+                                <p className="text-gray-700 leading-relaxed">
+                                    Estás haciendo un trabajo valiente al explorar tu mente y trabajar en tu bienestar. 
+                                    Los pensamientos difíciles no te definen. Eres mucho más que tus preocupaciones. 
+                                    Cada día que practicas estas técnicas, estás construyendo una mente más flexible y resiliente. 
+                                    <strong className="block mt-3 text-purple-700">¡Confía en el proceso y sé amable contigo mismo!</strong>
+                                </p>
+                            </div>
+
+                            <div className="bg-white rounded-2xl shadow-lg p-6">
+                                <h3 className="text-xl font-bold text-gray-800 mb-4">📞 Cuándo Buscar Ayuda Profesional en una Guardia (Centro de salud Hospital/Mutualistas)</h3>
+                                <p className="text-gray-700 mb-3">
+                                    Esta app es una herramienta complementaria. Considera buscar apoyo profesional si:
+                                </p>
+                                <ul className="space-y-2 text-gray-600">
+                                    <li className="flex items-start gap-2">
+                                        <span className="text-red-500 font-bold">•</span>
+                                        <span>Experimentas ansiedad intensa que no puedes manejar en el momento y debes calmar con medicación.</span>
+                                    </li>
+                                    <li className="flex items-start gap-2 bg-red-50 p-3 rounded-xl border-2 border-red-300">
+                                        <span className="text-red-600 font-bold text-lg">⚠️</span>
+                                        <span className="font-bold text-red-700">Tienes pensamientos de hacerte daño a ti mismo o a otros. URGENTE.</span>
+                                    </li>
+                                </ul>
+
+                                <div className="mt-6 bg-gradient-to-r from-blue-50 to-purple-50 p-5 rounded-xl border-2 border-blue-300">
+                                    <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                        <span className="text-xl">📱</span>
+                                        Líneas de Ayuda Disponibles:
+                                    </h4>
+                                    <div className="space-y-3">
+                                        <div className="bg-white p-3 rounded-lg">
+                                            <p className="font-bold text-blue-700 text-lg">0800 1920</p>
+                                            <p className="text-sm text-gray-600">Línea gratuita</p>
+                                        </div>
+                                        <div className="bg-white p-3 rounded-lg">
+                                            <p className="font-bold text-blue-700 text-lg">0800 0767 / *0767</p>
+                                            <p className="text-sm text-gray-600">Desde tu celular</p>
+                                        </div>
+                                        <div className="bg-white p-3 rounded-lg">
+                                            <p className="font-bold text-purple-700 text-lg">099 019 500</p>
+                                            <p className="text-sm text-gray-600">Escribe "Chatear" y selecciona "Contás"</p>
+                                            <p className="text-xs text-gray-500 mt-1">Acceso a equipo multidisciplinario de salud mental</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            // Menú de navegación
+            const menuItems = [
+                { id: 'home', label: 'Inicio', icon: <Smile className="w-5 h-5" /> },
+                { id: 'metaforas', label: 'Comprende tu Mente', icon: <Brain className="w-5 h-5" /> },
+                { id: 'flexibilizacion', label: 'Flexibiliza tu Pensamiento', icon: <Lightbulb className="w-5 h-5" /> },
+                { id: 'ansiedad', label: 'Calma tu Ansiedad', icon: <Heart className="w-5 h-5" /> },
+                { id: 'recursos', label: 'Recursos', icon: <BookOpen className="w-5 h-5" /> }
+            ];
+
+            return (
+                <>
+                    {showCover ? (
+                        <CoverScreen />
+                    ) : (
+                        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
+                            {/* Header */}
+                            <header className="bg-white shadow-md sticky top-0 z-50">
+                                <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-gradient-to-r from-pink-400 to-purple-500 rounded-xl">
+                                            <Heart className="w-6 h-6 text-white" />
+                                        </div>
+                                        <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
+                                            Mi Espacio de Bienestar
+                                        </h1>
+                                    </div>
+                                    <button
+                                        onClick={() => setMenuOpen(!menuOpen)}
+                                        className="p-2 hover:bg-gray-100 rounded-lg transition"
+                                    >
+                                        {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                                    </button>
+                                </div>
+
+                                {/* Mobile Menu */}
+                                {menuOpen && (
+                                    <div className="bg-white border-t border-gray-200 px-4 py-3">
+                                        {menuItems.map((item) => (
+                                            <button
+                                                key={item.id}
+                                                onClick={() => {
+                                                    setActiveSection(item.id);
+                                                    setMenuOpen(false);
+                                                }}
+                                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-2 transition ${
+                                                    activeSection === item.id
+                                                        ? 'bg-gradient-to-r from-pink-400 to-purple-500 text-white'
+                                                        : 'hover:bg-gray-100 text-gray-700'
+                                                }`}
+                                            >
+                                                {item.icon}
+                                                <span className="font-medium">{item.label}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </header>
+
+                            {/* Main Content */}
+                            <main className="max-w-6xl mx-auto px-4 py-8">
+                                {activeSection === 'home' && <HomeSection />}
+                                {activeSection === 'metaforas' && <MetaforasSection />}
+                                {activeSection === 'flexibilizacion' && <FlexibilizacionSection />}
+                                {activeSection === 'ansiedad' && <AnsiedadSection />}
+                                {activeSection === 'recursos' && <RecursosSection />}
+                            </main>
+
+                            {/* Footer */}
+                            <footer className="bg-white mt-12 py-6 border-t border-gray-200">
+                                <div className="max-w-6xl mx-auto px-4 text-center text-gray-600">
+                                    <p className="mb-2">💜 Cuida tu mente, cuida tu vida</p>
+                                    <p className="text-sm">Recuerda: el progreso es más importante que la perfección</p>
+                                </div>
+                            </footer>
+                        </div>
+                    )}
+                </>
+            );
+        };
+
+        ReactDOM.render(<TerapiaApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
